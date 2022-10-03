@@ -7,6 +7,19 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+#Header{
+  text-align: left;
+  margin: 0 0 0 2.5%;
+}
+
+#Form{
+
+}
+
+.neat-form{
+  
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
