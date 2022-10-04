@@ -1,0 +1,80 @@
+body {
+  margin: 0;
+    font-family: 'Didact Gothic', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#Header{
+  text-align: left;
+  padding: 0 0 0 2.5%;
+  color: #510359;
+  font-weight: bolder;
+}
+
+#Header h1{
+  margin-bottom: -1%;
+  font-size: 290%;
+}
+
+#Form{
+  padding: 4% 20%;
+  color: #510359;
+  font-size: larger;
+}
+
+.form-error {
+  color:red;
+  font-size: small;
+  margin: auto
+}
+
+.neat-form, label{
+  text-align: left;
+}
+
+input[type=text], input[type=password], input[type=email], select {
+width: 100%;
+padding: 0.75% 1%;
+margin: 0.7% 0 1.8% 0;
+display: inline-block;
+border: 1px solid #ccc;
+border-radius: 5px;
+box-sizing: border-box;
+color: #510359;
+}
+
+input[type=password]{
+  -webkit-text-security: disc;
+}
+
+#Form button {
+width: 35%;
+background-color: #510359;
+color: white;
+padding: 1% 1%;
+margin: 0.7% 0 1.8% 30%;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+text-align: center;
+transition: 260ms;
+}
+
+/* Add a background color to the submit button on mouse-over */
+#Form button:hover {
+background-color: #ffa900;
+transition: 330ms;
+} 
+
+#Form button:active{
+  background-color: #ed6a7c;
+  transition: 190ms;
+  } 
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
