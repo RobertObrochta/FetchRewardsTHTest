@@ -20,7 +20,6 @@ body {
 }
 
 #Form{
-  -webkit-text-security: disc;
   padding: 4% 20%;
   color: #510359;
   font-size: larger;
@@ -47,12 +46,16 @@ box-sizing: border-box;
 color: #510359;
 }
 
+input[type=password]{
+  -webkit-text-security: disc;
+}
+
 #Form button {
-width: 50%;
+width: 35%;
 background-color: #510359;
 color: white;
 padding: 1% 1%;
-margin: 0.7% 0 1.8% 25%;
+margin: 0.7% 0 1.8% 30%;
 border: none;
 border-radius: 5px;
 cursor: pointer;

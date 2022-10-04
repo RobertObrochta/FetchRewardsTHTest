@@ -10,6 +10,8 @@ const Form = () => {
         state: ''
     });
 
+    const [fetchSelectionOptions, setFetchSelectionOptions] = useState({});
+
     const [formErrors, setFormErrors] = useState({}); // builds up the errors, but doeos not change the form style until submit is hit.
     const initialRender = useRef(true);
     
@@ -54,9 +56,11 @@ const Form = () => {
         }
         return false;
     }
-
     useEffect(() => {
         if (initialRender.current){
+            fetch('https://frontend-take-home.fetchrewards.com/form')
+                .then(response => response.json())
+                .then(data => setFetchSelectionOptions(data));
             initialRender.current = false;
             return;
         }
