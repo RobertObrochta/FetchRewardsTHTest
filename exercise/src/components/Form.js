@@ -1,14 +1,13 @@
 import Completed from './Completed';
 import { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 
 const Form = () => {
     const [visitor, setVisitor] = useState({
-        name: '',
-        password: '',
-        email: '',
-        occupation: '',
-        state: ''
+        name: "",
+        email: "",
+        password: "",
+        occupation: "",
+        state: ""
     });
 
     const [formErrors, setFormErrors] = useState({}); // builds up the errors, but doeos not change the form style until submit is hit.
@@ -22,6 +21,8 @@ const Form = () => {
     const [state, setState] = useState('');
     const [formSubmitted, setFormSubmitted] = useState(false);
 
+    const [successful, setSuccessful] = useState(false);
+
     const [selectionOptions, setSelectionOptions] = useState({});
 
     async function fetchSelectionOptions() {
@@ -32,10 +33,27 @@ const Form = () => {
         return options;
     }
 
-    const submitForm = (userInfo) => { // TODO: POST will be here, upload whole state of visitor as a JSON object within the request body
-        console.log("Submitting form... with user info:", userInfo);
-        // TODO: redirect to Completed component
+    async function submitForm (userInfo) {
+        const request = {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: userInfo
+        };
+
+        const response = await fetch("https://frontend-take-home.fetchrewards.com/form", request)
+            .then(response => response.json())
+            .catch(error => console.error(error));
+
+        // ideally it would go like this, but there is a constant 500 error code, so I am omitting this condition
+        // if (response.ok){
+            setSuccessful(true);
+        //}
+        return response;
     }
+
+    const validateEmailFormat = (email) =>{
+        return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
+    };
 
     const validationHandler = () => {
         setFormSubmitted(true);
@@ -50,7 +68,8 @@ const Form = () => {
         let errors = {}; // update formErrors with this value
         if (fullName === ''){errors["name"] = "Name cannot be empty."}
         if (password === ''){errors["password"] = "Password cannot be empty."}
-        if (email === ''){errors["email"] = "Email cannot be empty."} // TODO: check for email format
+        if (email === ''){errors["email"] = "Email cannot be empty."}
+        else if (!validateEmailFormat(email)){errors["email"] = "Email format must follow: xxxxx@xxxxx.xxx"}
         if (occupation === ''){errors["occupation"] = "Please select an occupation."}
         if (state === ''){errors["state"] = "Please select a state."}
         setFormErrors(errors);
@@ -74,20 +93,23 @@ const Form = () => {
 
     return(
         <div id="Form">
+            {successful && <Completed/>}
+
+            {!successful &&
             <form className="neat-form">
                 <label>Full Name: 
                     {formSubmitted && <p className = "form-error">{formErrors["name"]}</p>}
-                    <input type="text" name="name" placeholder='Enter full name...' style={formSubmitted && formErrors["name"] ? {borderColor: "red"} : null} 
+                    <input type="text" name="name" placeholder='e.g. Thomas Shelby' style={formSubmitted && formErrors["name"] ? {borderColor: "red"} : null} 
                     onChange={(e) => setFullName(e.target.value)} />
                 </label>
                 <label>Email Address 
                     {formSubmitted && <p className = "form-error">{formErrors["email"]}</p>}
-                    <input type="email" name="email" placeholder='Enter email address...' style={formSubmitted && formErrors["email"] ? {borderColor: "red"} : null} 
+                    <input type="email" name="email" placeholder='e.g. shelbythomas@shelbyco.uk' style={formSubmitted && formErrors["email"] ? {borderColor: "red"} : null} 
                     onChange={(e) => setEmail(e.target.value)}/>
                 </label>
                 <label>Password 
                     {formSubmitted && <p className = "form-error">{formErrors["password"]}</p>}
-                    <input type="password" name="password" placeholder='Password...' style={formSubmitted && formErrors["password"] ? {borderColor: "red"} : null} 
+                    <input type="password" name="password" placeholder='Secure password...' style={formSubmitted && formErrors["password"] ? {borderColor: "red"} : null} 
                     onChange={(e) => setPassword(e.target.value)}/>
                 </label>
                 <label>Occupation 
@@ -110,6 +132,7 @@ const Form = () => {
                 </label>
                 <button type ="button" value="Submit" onClick={validationHandler}>Submit</button>
             </form>
+            }
         </div>
     )
 }

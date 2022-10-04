@@ -1,7 +1,7 @@
 const Completed = () => {
     return(
         <div id="Completed">
-            <h1> Form successfully completed!</h1> {/* TODO: Finish this page */}
+            <h1> Form successfully submitted!</h1>
         </div>
     )
 }
