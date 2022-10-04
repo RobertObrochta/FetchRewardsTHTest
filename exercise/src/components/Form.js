@@ -1,5 +1,6 @@
 import Completed from './Completed';
 import { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 
 const Form = () => {
     const [visitor, setVisitor] = useState({
@@ -10,8 +11,6 @@ const Form = () => {
         state: ''
     });
 
-    const [fetchSelectionOptions, setFetchSelectionOptions] = useState({});
-
     const [formErrors, setFormErrors] = useState({}); // builds up the errors, but doeos not change the form style until submit is hit.
     const initialRender = useRef(true);
     
@@ -21,58 +20,57 @@ const Form = () => {
     const [email, setEmail] = useState('');
     const [occupation, setOccupation] = useState('');
     const [state, setState] = useState('');
-
     const [formSubmitted, setFormSubmitted] = useState(false);
 
-    const submitForm = () => { // TODO: POST will be here, upload whole state of visitor as a JSON object within the request body
-        setVisitor({
-            name: fullName, 
-            password: password,
-            email: email,
-            occupation: occupation,
-            state: state
-        });
-        console.log("Submitting form... with user info:", visitor);
+    const [selectionOptions, setSelectionOptions] = useState({});
+
+    async function fetchSelectionOptions() {
+        const response = await fetch("https://frontend-take-home.fetchrewards.com/form");
+        const options = await response.json();
+
+        setSelectionOptions(options);
+        return options;
+    }
+
+    const submitForm = (userInfo) => { // TODO: POST will be here, upload whole state of visitor as a JSON object within the request body
+        console.log("Submitting form... with user info:", userInfo);
+        // TODO: redirect to Completed component
     }
 
     const validationHandler = () => {
         setFormSubmitted(true);
-        return checkForCompleteForm(fullName, password, email, occupation, state);
+        const isFormComplete = checkForCompleteForm(fullName, password, email, occupation, state);
+        
+        if (isFormComplete){
+            submitForm(visitor);
+        }
     }
 
     const checkForCompleteForm = (fullName, password, email, occupation, state) => {
         let errors = {}; // update formErrors with this value
-
-        if (formErrors === {}){
-            return true;
-        }
-        else{
-            if (fullName === ''){errors["name"] = "Name cannot be empty."}
-            if (password === ''){errors["password"] = "Password cannot be empty."}
-            if (email === ''){errors["email"] = "Email cannot be empty."} // TODO: check for email format
-            if (occupation === ''){errors["occupation"] = "Please select an occupation."}
-            if (state === ''){errors["state"] = "Please select a state."}
+        if (fullName === ''){errors["name"] = "Name cannot be empty."}
+        if (password === ''){errors["password"] = "Password cannot be empty."}
+        if (email === ''){errors["email"] = "Email cannot be empty."} // TODO: check for email format
+        if (occupation === ''){errors["occupation"] = "Please select an occupation."}
+        if (state === ''){errors["state"] = "Please select a state."}
         setFormErrors(errors);
-        }
-        return false;
+
+        return Object.keys(formErrors).length === 0;
     }
+
     useEffect(() => {
         if (initialRender.current){
-            fetch('https://frontend-take-home.fetchrewards.com/form')
-                .then(response => response.json())
-                .then(data => setFetchSelectionOptions(data));
+            fetchSelectionOptions();
             initialRender.current = false;
             return;
         }
+        if (selectionOptions.length === 0){
+            fetchSelectionOptions();
+        }
         checkForCompleteForm(fullName, password, email, occupation, state);
+        setVisitor({name: fullName, password: password, email: email, occupation: occupation, state: state});
     }, [fullName, password, email, occupation, state])
 
-    if (validationHandler === true){ // if no errors
-        submitForm();
-        return (
-            <Completed/>
-        )
-    }
 
     return(
         <div id="Form">
@@ -92,17 +90,22 @@ const Form = () => {
                     <input type="password" name="password" placeholder='Password...' style={formSubmitted && formErrors["password"] ? {borderColor: "red"} : null} 
                     onChange={(e) => setPassword(e.target.value)}/>
                 </label>
-                <label> {/* TODO map function ==> option from the GET request */}Occupation 
-                {formSubmitted && <p className = "form-error">{formErrors["occupation"]}</p>
-                    }
+                <label>Occupation 
+                {formSubmitted && <p className = "form-error">{formErrors["occupation"]}</p>}
                     <select name="occupation" placeholder='Select an occupation...' style={formSubmitted && formErrors["occupation"] ? {borderColor: "red"} : null} 
-                    onChange={(e) => setOccupation(e.target.value)}>
+                            onChange={(e) => setOccupation(e.target.value)}>
+                        <option key = "0"></option>
+                    {Object.keys(selectionOptions).length > 0 ?selectionOptions.occupations.map((occup, index) =>
+                        (<option key = {index + 1}>{occup}</option>)) : null}
                     </select>
                 </label>
-                <label> {/* TODO map function ==> option from the GET request */} State 
+                <label>State 
                 {formSubmitted && <p className = "form-error">{formErrors["state"]}</p>}
                     <select name="state" placeholder='Select a state...' style={formSubmitted && formErrors["state"] ? {borderColor: "red"} : null} 
-                    onChange={(e) => setState(e.target.value)}>
+                            onChange={(e) => setState(e.target.value)}>
+                        <option key = "0"></option>
+                        {Object.keys(selectionOptions).length > 0 ? selectionOptions.states.map((state, index) =>
+                        (<option key = {index + 1}>{state.name}</option>)) : null}
                     </select>
                 </label>
                 <button type ="button" value="Submit" onClick={validationHandler}>Submit</button>

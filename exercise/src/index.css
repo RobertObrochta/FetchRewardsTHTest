@@ -37,7 +37,7 @@ body {
 
 input[type=text], input[type=password], input[type=email], select {
 width: 100%;
-padding: 0.5% 1%;
+padding: 0.75% 1%;
 margin: 0.7% 0 1.8% 0;
 display: inline-block;
 border: 1px solid #ccc;
@@ -68,6 +68,11 @@ transition: 260ms;
 background-color: #ffa900;
 transition: 330ms;
 } 
+
+#Form button:active{
+  background-color: #ed6a7c;
+  transition: 190ms;
+  } 
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
