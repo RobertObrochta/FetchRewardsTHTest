@@ -44,6 +44,7 @@ const Form = () => {
             .then(response => response.json())
             .catch(error => console.error(error));
 
+        /* IMPORTANT: PLEASE READ */
         // ideally it would go like this, but there is a constant 500 error code, so I am omitting this condition
         // if (response.ok){
             setSuccessful(true);
